@@ -1,8 +1,30 @@
 # Proton VPN Linux — NetworkManager Kill Switch Async Fix (`v4.2`)
 
+[![CI](https://github.com/silentpatcher/protonvpn-dummy-rescue/actions/workflows/ci.yml/badge.svg)](https://github.com/silentpatcher/protonvpn-dummy-rescue/actions/workflows/ci.yml)
+
 A surgical, idempotent patch for Proton VPN's Linux NetworkManager backend (`nmclient.py`) that eliminates connection/disconnection hangs, `TimeoutError` exceptions, and PolicyKit deletion race conditions caused by dummy Kill Switch interfaces (`pvpnksintrf0`, `pvpnksintrf1`, `ipv6leakintrf0`).
 
 ---
+
+## Symptoms & Log Errors
+
+This patch fixes hangs and crashes on Linux when connecting, disconnecting, or toggling the Kill Switch (`Standard` / `Advanced`) in Proton VPN. Common symptoms and journalctl / Proton VPN log errors include:
+
+- **Proton VPN hangs indefinitely on "Connecting..." or "Disconnecting..."**
+- **Kill Switch dummy interfaces stuck in `UNMANAGED` state:** `pvpnksintrf0`, `pvpnksintrf1`, `ipv6leakintrf0`
+- `TimeoutError` / `asyncio.exceptions.TimeoutError` inside `_wrap_future` during `add_connection_async` or `remove_connection_async`
+- `GLib.GError: nm-settings-error-quark: connection was deleted`
+- `RuntimeError: Error adding kill switch connection` or `Error removing kill switch connection`
+
+## Quick Start
+
+**1. Completely quit Proton VPN** (including the system tray icon), then run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/silentpatcher/protonvpn-dummy-rescue/main/patch_proton_nm.py -o patch_proton_nm.py
+python3 patch_proton_nm.py --dry-run
+sudo python3 patch_proton_nm.py
+```
 
 ## Compatibility & Tested Environments
 
@@ -66,7 +88,17 @@ sudo python3 patch_proton_nm.py --restore
 ### Note on Package Updates (`apt` / `dnf` upgrade)
 Because this patch modifies system files under `/usr/lib/python3/.../proton/vpn/`, any package manager upgrade of Proton VPN packages will overwrite them with upstream files. Re-run `sudo python3 patch_proton_nm.py` after updating until Proton merges an official fix.
 
----
+On **Debian / Ubuntu / Linux Mint**, you can temporarily hold Proton VPN packages to prevent automatic updates from overwriting the patch:
+
+```bash
+sudo apt-mark hold proton-vpn-gtk-app python3-proton-vpn-api-core python3-proton-vpn-network-manager python3-proton-vpn-killswitch-network-manager python3-proton-vpn-killswitch-network-manager-wireguard
+```
+
+To re-enable updates later:
+
+```bash
+sudo apt-mark unhold proton-vpn-gtk-app python3-proton-vpn-api-core python3-proton-vpn-network-manager python3-proton-vpn-killswitch-network-manager python3-proton-vpn-killswitch-network-manager-wireguard
+```
 
 ## License
 
