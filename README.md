@@ -8,7 +8,7 @@ A surgical, idempotent patch for Proton VPN's Linux NetworkManager backend (`nmc
 
 ## Symptoms & Log Errors
 
-This patch fixes hangs and crashes on Linux when connecting, disconnecting, or toggling the Kill Switch (`Standard` / `Advanced`) in Proton VPN. Common symptoms and journalctl / Proton VPN log errors include:
+This patch fixes hangs and crashes on Linux when connecting, disconnecting, or toggling the Kill Switch (`Off`, `Standard`, or `Advanced`) in Proton VPN — including hangs with Kill Switch disabled caused by IPv6 leak protection dummy interfaces (`ipv6leakintrf0`). Common symptoms and journalctl / Proton VPN log errors include:
 
 - **Proton VPN hangs indefinitely on "Connecting..." or "Disconnecting..."**
 - **Kill Switch dummy interfaces stuck in `UNMANAGED` state:** `pvpnksintrf0`, `pvpnksintrf1`, `ipv6leakintrf0`
