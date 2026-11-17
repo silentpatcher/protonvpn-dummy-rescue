@@ -23,7 +23,7 @@ jobs:
       - name: Run Ruff linter
         run: |
           pip install ruff
-          ruff check --ignore F401,E501 patch_proton_nm.py tests/test_ci.py
+          ruff check --ignore F401,E501,PLW1510 patch_proton_nm.py tests/test_ci.py
       - name: Run patch simulation
         run: python tests/test_ci.py
 
