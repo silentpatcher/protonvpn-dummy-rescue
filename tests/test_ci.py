@@ -8,7 +8,7 @@ import patch_proton_nm as p
 mock_dir = Path("/usr/lib/python3/dist-packages/proton/vpn/backend/networkmanager/killswitch/default")
 subprocess.run(["sudo", "mkdir", "-p", str(mock_dir)], check=True)
 
-var = p.VARIANTS[0]
+var = p.VARIANTS.pop(0)
 old_add = p.OLD_ADD_SECTION.replace("{add_err_prefix}", var["add_err_prefix"]).replace("{add_err_arg}", var["add_err_arg"])
 old_rem = p.OLD_REMOVE_SECTION.replace("{rem_err_prefix}", var["rem_err_prefix"]).replace("{rem_err_arg}", var["rem_err_arg"])
 
